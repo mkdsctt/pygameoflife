@@ -6,16 +6,16 @@ Python 2.7.3
 Pygame 1.9.1
 
 The file format for input files:
-		#game of life simulation
-		#seed description file
-		#format:
-		width,height,size,NUM
-		x[0],	y[0]
-		x[1],	y[1]
-			. 	 .
-			. 	 .
-			. 	 .
-		x[NUM-1],y[NUM-1]
+	#game of life simulation
+	#seed description file
+	#format:
+	width,height,size,NUM
+	x[0],	y[0]
+	x[1],	y[1]
+		. 	 .
+		. 	 .
+		. 	 .
+	x[NUM-1],y[NUM-1]
 
 Additionally you can use the mouse to toggle cells on/off.
 
