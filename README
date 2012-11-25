@@ -21,6 +21,7 @@ Additionally you can use the mouse to toggle cells on/off.
 Keyboard Commands:
 -------------
 ESC     exit
+SPC     generation step
 -       decrease the play speed
 =       increase the play speed
 p       toggle play/pause
