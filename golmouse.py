@@ -13,33 +13,7 @@ import sys, pygame, math, random
 
 from pygame.locals import *
 
-if len(sys.argv) != 3:
-	sys.exit("usage: " + sys.argv[0] + " gamefile interval")
 
-pygame.init()
-
-#define colors
-white = 	255,	255,	255
-red =		255,	0,		0
-green =		0,		255,	0
-blue =		0,		0,		255
-black = 	0,		0,		0
-
-game = []
-gamefile = open(sys.argv[1],'r')
-line = gamefile.readline().split(',')
-width, height = int(line[0]), int(line[1])
-size, numseed = int(line[2]), int(line[3])
-numrows, numcols = height/size, width/size
-interval = int(sys.argv[2])
-seeds_read = 0
-screen = pygame.display.set_mode([width,height])
-noiselevel = int((width*height)*0.001)
-
-#print "rows: " + str(numrows) + ",cols: " + str(numcols)
-
-if width % size != 0 or height % size != 0:
-	sys.exit("error: size must evenly divide width and height")
 
 def drawlines():
 	vbars = numcols - 1
@@ -119,59 +93,87 @@ def writegame():
 		#game[int(change[0])][int(change[1])] = int(change[2])
 		print str(change[0]) + "," + str(change[1])
 
+if __name__ == "__main__":
+	if len(sys.argv) != 3:
+		sys.exit("usage: " + sys.argv[0] + " gamefile interval")
 
-for i in range(numrows):
-	game.append([])
-	for j in range(numcols):
-		game[i].append(0)
+	pygame.init()
 
-#printgame()
-while seeds_read < numseed:
+	#define colors
+	white = 	255,	255,	255
+	red =		255,	0,		0
+	green =		0,		255,	0
+	blue =		0,		0,		255
+	black = 	0,		0,		0
+
+	game = []
+	gamefile = open(sys.argv[1],'r')
 	line = gamefile.readline().split(',')
-	#TODO CHANGE: see if this is where problem is with numbering
-	game[int(line[0])][int(line[1])] = 1
-	seeds_read += 1
+	width, height = int(line[0]), int(line[1])
+	size, numseed = int(line[2]), int(line[3])
+	numrows, numcols = height/size, width/size
+	interval = int(sys.argv[2])
+	seeds_read = 0
+	screen = pygame.display.set_mode([width,height])
+	noiselevel = int((width*height)*0.001)
 
-play = 0
-keepgoing = 1
-while keepgoing == 1:
-	screen.fill(white)
-	drawlines()
-	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			sys.exit()
-		elif event.type == pygame.KEYDOWN:
-			if event.key == K_ESCAPE:
-				keepgoing = 0
-				break
-			elif event.key == K_SPACE:
-				playgame()
-			elif event.key == K_p:
-				play = 1 - play
-			elif event.key == K_EQUALS and interval > 60:
-				interval -= 100
-			elif event.key == K_MINUS and interval < 10000:
-				interval += 100
-			elif event.key == K_c:
-				clear()
-			elif event.key == K_n:
-				addnoise()
-			elif event.key == K_o:
-				writegame()
-		elif event.type == pygame.MOUSEBUTTONDOWN:
-			if event.button == 1:
-				x, y = int(event.pos[0]), int(event.pos[1])
-				col = int(math.floor((float(x)/width)*numcols))
-				row = int(math.floor((float(y)/height)*numrows))
-				game[row][col] = 1 - game[row][col]
-	#draw game
+	#print "rows: " + str(numrows) + ",cols: " + str(numcols)
+
+	if width % size != 0 or height % size != 0:
+		sys.exit("error: size must evenly divide width and height")
+
 	for i in range(numrows):
+		game.append([])
 		for j in range(numcols):
-			if(game[i][j] == 1):
-				pygame.draw.rect(screen,black,pygame.Rect(j*size,i*size,size,size),0)
-	#update screen
-	pygame.display.flip()
-	pygame.time.wait(41)
-	if play == 1:
-		playgame()
-		pygame.time.wait(interval)
+			game[i].append(0)
+
+	#printgame()
+	while seeds_read < numseed:
+		line = gamefile.readline().split(',')
+		#TODO CHANGE: see if this is where problem is with numbering
+		game[int(line[0])][int(line[1])] = 1
+		seeds_read += 1
+
+	play = 0
+	keepgoing = 1
+	while keepgoing == 1:
+		screen.fill(white)
+		drawlines()
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				sys.exit()
+			elif event.type == pygame.KEYDOWN:
+				if event.key == K_ESCAPE:
+					keepgoing = 0
+					break
+				elif event.key == K_SPACE:
+					playgame()
+				elif event.key == K_p:
+					play = 1 - play
+				elif event.key == K_EQUALS and interval > 60:
+					interval -= 100
+				elif event.key == K_MINUS and interval < 10000:
+					interval += 100
+				elif event.key == K_c:
+					clear()
+				elif event.key == K_n:
+					addnoise()
+				elif event.key == K_o:
+					writegame()
+			elif event.type == pygame.MOUSEBUTTONDOWN:
+				if event.button == 1:
+					x, y = int(event.pos[0]), int(event.pos[1])
+					col = int(math.floor((float(x)/width)*numcols))
+					row = int(math.floor((float(y)/height)*numrows))
+					game[row][col] = 1 - game[row][col]
+		#draw game
+		for i in range(numrows):
+			for j in range(numcols):
+				if(game[i][j] == 1):
+					pygame.draw.rect(screen,black,pygame.Rect(j*size,i*size,size,size),0)
+		#update screen
+		pygame.display.flip()
+		pygame.time.wait(41)
+		if play == 1:
+			playgame()
+			pygame.time.wait(interval)
