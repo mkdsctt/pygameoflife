@@ -13,8 +13,6 @@ import sys, pygame, math, random
 
 from pygame.locals import *
 
-
-
 def drawlines():
 	vbars = numcols - 1
 	hbars = numrows - 1
