@@ -19,12 +19,12 @@ The file format for input files:
 
 Additionally you can use the mouse to toggle cells on/off.
 
-Key Commands:
+Keyboard Commands:
 -------------
-ESC			exit
--				decrease the play speed
-=				increase the play speed
-p				toggle play/pause
-c				clear game board
-n				add noise
-o				write game to output file
+ESC     exit
+-       decrease the play speed
+=       increase the play speed
+p       toggle play/pause
+c       clear game board
+n       add noise
+o       write game to output file
