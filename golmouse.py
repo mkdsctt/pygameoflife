@@ -13,6 +13,7 @@ import sys, pygame, math, random
 
 from pygame.locals import *
 
+""" draw the cell grid """
 def drawlines():
 	vbars = numcols - 1
 	hbars = numrows - 1
@@ -23,11 +24,13 @@ def drawlines():
 	for i in range(hbars):
 		pygame.draw.line(screen,red,[0,(i+1)*size-1],[width,(i+1)*size-1])
 
+""" clear the game board of all live cells """
 def clear():
 	for i in range(numrows):
 		for j in range(numcols):
 			game[i][j] = 0
 
+""" determine how many of the 8 neighbors of (i,j) are 'alive' """
 def count(i , j):
 	count = 0
 	if i > 0 and game[i-1][j] == 1:
@@ -53,7 +56,8 @@ def printgame():
 		for j in range(numcols):
 			sys.stdout.write(str(game[i][j]))
 		sys.stdout.write('\n')
-
+		
+""" play one generation of the game """
 def playgame():
 	newgame = []
 	for i in range(numrows):
@@ -69,6 +73,7 @@ def playgame():
 	for change in newgame:
 		game[int(change[0])][int(change[1])] = int(change[2])
 
+""" add noise randomly to the picture """
 def addnoise():
 	for i in range(noiselevel):
 		col = random.randint(0,int(numcols) - 1)
