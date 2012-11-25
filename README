@@ -27,4 +27,4 @@ SPC     generation step
 p       toggle play/pause
 c       clear game board
 n       add noise
-o       write game to output file
+o       write game to std output
