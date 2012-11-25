@@ -1,0 +1,10 @@
+#game of life simulation
+#seed description file
+#format:
+width,height,size,NUM
+x[0],	y[0]
+x[1],	y[1]
+  . 	 .
+  . 	 .
+  . 	 .
+x[NUM-1],y[NUM-1]
