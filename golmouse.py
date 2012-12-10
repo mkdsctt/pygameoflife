@@ -167,6 +167,10 @@ def handleEvents():
 			elif event.key == K_o:
 				# w - write out game description to stdout
 				writegame()
+			elif event.key == K_r:
+				# r - reload the game from file
+				clear()
+				loadGame(game)
 		elif event.type == pygame.MOUSEBUTTONDOWN:
 			if event.button == 1:
 				# toggle cells on left mouse button click
@@ -222,7 +226,7 @@ if __name__ == "__main__":
 		drawlines()
 		drawGame()
 		pygame.display.flip()
-		pygame.time.wait(41)
+		pygame.time.wait(16)
 		
 		# if we are playing, step one generation
 		if play:
