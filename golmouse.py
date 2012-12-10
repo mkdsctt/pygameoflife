@@ -9,19 +9,20 @@ from pygame.locals import *
 
 """ draw the cell grid """
 def drawlines():
-	vbars = numcols - 1
-	hbars = numrows - 1
-	#draw vbars
-	for i in range(vbars):
+	#draw vbars -- use numcols - 1 since 4 cols are separated by 3 lines
+	for i in range(numcols - 1):
 		pygame.draw.line(screen,red,[(i+1)*size-1,0],[(i+1)*size-1,height])
-	#draw hbars
-	for i in range(hbars):
+		
+	#draw hbars -- use numrows - 1 since 3 lines separate 4 rows
+	for i in range(numrows - 1):
 		pygame.draw.line(screen,red,[0,(i+1)*size-1],[width,(i+1)*size-1])
 
 """ clear the game board of all live cells """
 def clear():
 	for i in range(numrows):
+		# for each row
 		for j in range(numcols):
+			# for each colum
 			game[i][j] = 0
 
 """ determine how many of the 8 neighbors of (i,j) are 'alive' """
@@ -45,6 +46,7 @@ def count(i , j):
 		count += 1
 	return count
 
+""" print out the game , for internal use -- not for writing game file """
 def printgame():
 	for i in range(numrows):
 		for j in range(numcols):
@@ -73,14 +75,19 @@ def addnoise():
 		col = random.randint(0,int(numcols) - 1)
 		row = random.randint(0,int(numrows) - 1)
 		game[row][col] = 1 - game[row][col]
-
-def writegame():
-	seednum = 0
+		
+""" get the population count -- the number of 'live' cells """
+def population():
+	count = 0
 	for i in range(numrows):
 		for j in range(numcols):
 			if game[i][j] == 1:
-				seednum += 1
-	print str(width) + "," + str(height) + "," + str(size) + "," + str(seednum)
+				count += 1
+	return count
+
+""" write out the game description to std out """
+def writegame():
+	print str(width) + "," + str(height) + "," + str(size) + "," + str(population())
 	newgame = []
 	for i in range(numrows):
 		for j in range(numcols):
