@@ -1,14 +1,8 @@
 #!/usr/bin/python
-# third attempt at python implementation of conway's game of life
+# python implementation of conway's game of life
 #
 # a point should be given as (x,y) alternatively: (col,row)
 # a point should be given as [row][col] for array
-
-# gamefile format:
-# width,height,size,numseed
-# seed[0]
-# ...
-# seed[n-1]
 import sys, pygame, math, random
 
 from pygame.locals import *
