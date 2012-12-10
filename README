@@ -2,8 +2,10 @@ This program uses python and pygame to implement Conway's Game of Life.
 
 REQUIREMENTS:
 -------------
+<pre>
 Python 2.7.3
 Pygame 1.9.1
+</pre>
 
 The file format for input files:
     #comment line
