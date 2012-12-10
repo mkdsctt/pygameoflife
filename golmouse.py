@@ -97,6 +97,67 @@ def writegame():
 		#game[int(change[0])][int(change[1])] = int(change[2])
 		print str(change[0]) + "," + str(change[1])
 
+""" initialize the game board to all empty cells """
+def initGame(theGame):
+	for i in range(numrows):
+		theGame.append([])
+		for j in range(numcols):
+			theGame[i].append(0)
+
+""" load the game board from a game file """
+def loadGame(theGame):
+	#printgame()
+	seeds_read = 0
+	while seeds_read < numseed:
+		line = gamefile.readline().split(',')
+		#TODO CHANGE: see if this is where problem is with numbering
+		theGame[int(line[0])][int(line[1])] = 1
+		seeds_read += 1
+
+""" draw the game, draw each cell """
+def drawGame():
+	#draw game
+	for i in range(numrows):
+		for j in range(numcols):
+			if(game[i][j] == 1):
+				pygame.draw.rect(screen,black,pygame.Rect(j*size,i*size,size,size),0)
+
+""" handle the keyboard / mouse events """
+def handleEvents():
+	global play
+	global keepgoing
+	global interval
+	global game
+	
+	for event in pygame.event.get():
+		if event.type == pygame.QUIT:
+			sys.exit()
+		elif event.type == pygame.KEYDOWN:
+			if event.key == K_ESCAPE:
+				keepgoing = 0
+				break
+			elif event.key == K_SPACE:
+				playgame()
+			elif event.key == K_p:
+				play = 1 - play
+			elif event.key == K_EQUALS and interval > 60:
+				interval -= 100
+			elif event.key == K_MINUS and interval < 10000:
+				interval += 100
+			elif event.key == K_c:
+				clear()
+			elif event.key == K_n:
+				addnoise()
+			elif event.key == K_o:
+				writegame()
+		elif event.type == pygame.MOUSEBUTTONDOWN:
+			if event.button == 1:
+				x, y = int(event.pos[0]), int(event.pos[1])
+				col = int(math.floor((float(x)/width)*numcols))
+				row = int(math.floor((float(y)/height)*numrows))
+				game[row][col] = 1 - game[row][col]
+
+""" main method """
 if __name__ == "__main__":
 	if len(sys.argv) != 3:
 		sys.exit("usage: " + sys.argv[0] + " gamefile interval")
@@ -117,67 +178,28 @@ if __name__ == "__main__":
 	size, numseed = int(line[2]), int(line[3])
 	numrows, numcols = height/size, width/size
 	interval = int(sys.argv[2])
-	seeds_read = 0
 	screen = pygame.display.set_mode([width,height])
 	noiselevel = int((width*height)*0.001)
-
-	#print "rows: " + str(numrows) + ",cols: " + str(numcols)
 
 	if width % size != 0 or height % size != 0:
 		sys.exit("error: size must evenly divide width and height")
 
-	for i in range(numrows):
-		game.append([])
-		for j in range(numcols):
-			game[i].append(0)
-
-	#printgame()
-	while seeds_read < numseed:
-		line = gamefile.readline().split(',')
-		#TODO CHANGE: see if this is where problem is with numbering
-		game[int(line[0])][int(line[1])] = 1
-		seeds_read += 1
-
+	initGame(game)
+	loadGame(game)
+	
 	play = 0
 	keepgoing = 1
-	while keepgoing == 1:
+	while keepgoing:
+		handleEvents()
+		
+		# update the display
 		screen.fill(white)
 		drawlines()
-		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				sys.exit()
-			elif event.type == pygame.KEYDOWN:
-				if event.key == K_ESCAPE:
-					keepgoing = 0
-					break
-				elif event.key == K_SPACE:
-					playgame()
-				elif event.key == K_p:
-					play = 1 - play
-				elif event.key == K_EQUALS and interval > 60:
-					interval -= 100
-				elif event.key == K_MINUS and interval < 10000:
-					interval += 100
-				elif event.key == K_c:
-					clear()
-				elif event.key == K_n:
-					addnoise()
-				elif event.key == K_o:
-					writegame()
-			elif event.type == pygame.MOUSEBUTTONDOWN:
-				if event.button == 1:
-					x, y = int(event.pos[0]), int(event.pos[1])
-					col = int(math.floor((float(x)/width)*numcols))
-					row = int(math.floor((float(y)/height)*numrows))
-					game[row][col] = 1 - game[row][col]
-		#draw game
-		for i in range(numrows):
-			for j in range(numcols):
-				if(game[i][j] == 1):
-					pygame.draw.rect(screen,black,pygame.Rect(j*size,i*size,size,size),0)
-		#update screen
+		drawGame()
 		pygame.display.flip()
 		pygame.time.wait(41)
-		if play == 1:
+		
+		# if we are playing, step one generation
+		if play:
 			playgame()
 			pygame.time.wait(interval)
