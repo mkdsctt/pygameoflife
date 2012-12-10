@@ -122,13 +122,23 @@ def drawGame():
 			if(game[i][j] == 1):
 				pygame.draw.rect(screen,black,pygame.Rect(j*size,i*size,size,size),0)
 
+""" get the row, col of the cell under the coords x, y """
+def getCell( x, y ):
+	return y / size, x / size
+
+""" invert the value of a cell -- keep track of last one inverted """
+def invertCell( x, y):
+	global enabling
+	
+	game[x][y] = 1 - game[x][y]
+
 """ handle the keyboard / mouse events """
 def handleEvents():
-	global play
+	global play 
 	global keepgoing
 	global interval
 	global game
-	
+
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			sys.exit()
@@ -137,25 +147,40 @@ def handleEvents():
 				keepgoing = 0
 				break
 			elif event.key == K_SPACE:
+				# space - advance the simulation one step / generation
 				playgame()
 			elif event.key == K_p:
+				# p - 'play' the game -- one generation per interval
 				play = 1 - play
 			elif event.key == K_EQUALS and interval > 60:
+				# = - increase the play speed (by reducing interval)
 				interval -= 100
 			elif event.key == K_MINUS and interval < 10000:
+				# - - decrease the play speed (by increasing interval)
 				interval += 100
 			elif event.key == K_c:
+				# c - clear the game screen
 				clear()
 			elif event.key == K_n:
+				# n - add noise to the grid
 				addnoise()
 			elif event.key == K_o:
+				# w - write out game description to stdout
 				writegame()
 		elif event.type == pygame.MOUSEBUTTONDOWN:
 			if event.button == 1:
-				x, y = int(event.pos[0]), int(event.pos[1])
-				col = int(math.floor((float(x)/width)*numcols))
-				row = int(math.floor((float(y)/height)*numrows))
-				game[row][col] = 1 - game[row][col]
+				# toggle cells on left mouse button click
+				target = getCell(int(event.pos[0]),int(event.pos[1]))
+				invertCell(target[0],target[1])
+		elif event.type == pygame.MOUSEMOTION:
+			if pygame.mouse.get_pressed()[0]:
+				# if we have a LMB press, enable cells
+				target = getCell(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
+				game[target[0]][target[1]] = 1
+			elif pygame.mouse.get_pressed()[2]:
+				# if we have a RMB press, disable cells
+				target = getCell(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
+				game[target[0]][target[1]] = 0
 
 """ main method """
 if __name__ == "__main__":
@@ -180,7 +205,7 @@ if __name__ == "__main__":
 	interval = int(sys.argv[2])
 	screen = pygame.display.set_mode([width,height])
 	noiselevel = int((width*height)*0.001)
-
+	
 	if width % size != 0 or height % size != 0:
 		sys.exit("error: size must evenly divide width and height")
 
