@@ -243,26 +243,15 @@ if __name__ == "__main__":
 	black = 	0,		0,		0
 
 	game = []
-	
-	#~ gamefile = open(sys.argv[1],'r')
-	#~ line = gamefile.readline().split(',')
-	#~ width, height = int(line[0]), int(line[1])
-	#~ size, numseed = int(line[2]), int(line[3])
-	#~ numrows, numcols = height/size, width/size
 	numrows, numcols = 0, 0
 	
-	loadGame(game,sys.argv[1])
-	#initGame(game)
-	
+	loadGame(game,sys.argv[1])	
 	interval = int(sys.argv[2])
 	screen = pygame.display.set_mode([width,height])
 	noiselevel = int((width*height)*0.001)
 	
 	if width % size != 0 or height % size != 0:
 		sys.exit("error: size must evenly divide width and height")
-
-	
-	#loadGame(game)
 	
 	play = 0
 	keepgoing = 1
