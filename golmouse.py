@@ -136,6 +136,7 @@ def loadGame(theGame, theFile):
 	global size
 	global numseed
 	global numrows
+	global screen
 	global numcols
 	#global game
 	
@@ -144,7 +145,7 @@ def loadGame(theGame, theFile):
 	width, height = int(line[0]), int(line[1])
 	size, numseed = int(line[2]), int(line[3])
 	numrows, numcols = height/size, width/size
-	
+	screen = pygame.display.set_mode([width,height])
 	initGame(theGame)
 	
 	seeds_read = 0
@@ -153,6 +154,8 @@ def loadGame(theGame, theFile):
 		#TODO CHANGE: see if this is where problem is with numbering
 		theGame[int(line[0])][int(line[1])] = 1
 		seeds_read += 1
+		
+	updateDisplay(screen)
 
 """ draw the game, draw each cell """
 def drawGame():
@@ -180,6 +183,7 @@ def handleEvents():
 	global keepgoing
 	global interval
 	global game
+	global screen
 
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
@@ -191,6 +195,7 @@ def handleEvents():
 			elif event.key == K_SPACE:
 				# space - advance the simulation one step / generation
 				playgame()
+				updateDisplay(screen)
 			elif event.key == K_p:
 				# p - 'play' the game -- one generation per interval
 				play = 1 - play
@@ -228,6 +233,13 @@ def handleEvents():
 				target = getCellCoords(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
 				game[target[0]][target[1]] = 0
 
+def updateDisplay(screen):
+	# update the display
+	screen.fill(white)
+	drawlines()
+	drawGame()
+	pygame.display.flip()
+
 """ main method """
 if __name__ == "__main__":
 	if len(sys.argv) != 3:
@@ -247,7 +259,7 @@ if __name__ == "__main__":
 	
 	loadGame(game,sys.argv[1])	
 	interval = int(sys.argv[2])
-	screen = pygame.display.set_mode([width,height])
+	
 	noiselevel = int((width*height)*0.001)
 	
 	if width % size != 0 or height % size != 0:
@@ -257,15 +269,12 @@ if __name__ == "__main__":
 	keepgoing = 1
 	while keepgoing:
 		handleEvents()
-		
-		# update the display
-		screen.fill(white)
-		drawlines()
-		drawGame()
-		pygame.display.flip()
-		pygame.time.wait(16)
+
+		pygame.time.wait(interval)
 		
 		# if we are playing, step one generation
 		if play:
+			# update a generation
 			playgame()
-			pygame.time.wait(interval)
+			updateDisplay(screen)
+			
