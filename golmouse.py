@@ -89,9 +89,13 @@ def playgame():
 
 """ add noise randomly to the picture """
 def addnoise():
+	# noiselevel is the number of cells we should affect
 	for i in range(noiselevel):
+		# get a randomly chosen row, col
 		col = random.randint(0,int(numcols) - 1)
 		row = random.randint(0,int(numrows) - 1)
+		
+		# invert its live-ness
 		invertCell(row,col)
 		
 """ get the population count -- the number of 'live' cells """
