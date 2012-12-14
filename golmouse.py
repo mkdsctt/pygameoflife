@@ -136,9 +136,8 @@ def loadGame(theGame, theFile):
 	global size
 	global numseed
 	global numrows
-	global screen
 	global numcols
-	#global game
+	global screen
 	
 	gamefile = open(theFile,'r')
 	line = gamefile.readline().split(',')
@@ -151,7 +150,6 @@ def loadGame(theGame, theFile):
 	seeds_read = 0
 	while seeds_read < numseed:
 		line = gamefile.readline().split(',')
-		#TODO CHANGE: see if this is where problem is with numbering
 		theGame[int(line[0])][int(line[1])] = 1
 		seeds_read += 1
 		
@@ -182,8 +180,6 @@ def handleEvents():
 	global play 
 	global keepgoing
 	global interval
-	global game
-	global screen
 
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
@@ -269,8 +265,6 @@ if __name__ == "__main__":
 	keepgoing = 1
 	while keepgoing:
 		handleEvents()
-
-		pygame.time.wait(interval)
 		
 		# if we are playing, step one generation
 		if play:
@@ -278,3 +272,5 @@ if __name__ == "__main__":
 			playgame()
 			updateDisplay(screen)
 			
+		pygame.time.wait(interval)
+		
