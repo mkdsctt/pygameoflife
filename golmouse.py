@@ -86,6 +86,8 @@ def playgame():
 	# update the game to reflect our changes
 	for change in diff:
 		game[int(change[0])][int(change[1])] = int(change[2])
+		updateCell(int(change[0]),int(change[1]))
+	pygame.display.flip()
 
 """ add noise randomly to the picture """
 def addnoise():
@@ -161,6 +163,15 @@ def loadGame(theGame, theFile):
 		seeds_read += 1
 		
 	updateDisplay(screen)
+	
+""" update a particular cell """
+def updateCell(i, j):
+	if alive(game,i,j):
+		# if the cell is alive
+		# fill in the cell location with a black rectangle
+		pygame.draw.rect(screen,black,pygame.Rect(j*size,i*size,size,size),0)
+	else:
+		pygame.draw.rect(screen,white,pygame.Rect(j*size,i*size,size,size),0)
 
 """ draw the game, draw each cell """
 def drawGame():
@@ -211,6 +222,7 @@ def handleEvents():
 			elif event.key == K_c:
 				# c - clear the game screen
 				clear()
+				updateDisplay(screen)
 			elif event.key == K_n:
 				# n - add noise to the grid
 				addnoise()
@@ -226,20 +238,26 @@ def handleEvents():
 				# toggle cells on left mouse button click
 				target = getCellCoords(int(event.pos[0]),int(event.pos[1]))
 				invertCell(target[0],target[1])
+				updateCell(target[0],target[1])
+				pygame.display.flip()
 		elif event.type == pygame.MOUSEMOTION:
 			if pygame.mouse.get_pressed()[0]:
 				# if we have a LMB press, enable cells
 				target = getCellCoords(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
 				game[target[0]][target[1]] = 1
+				updateCell(target[0],target[1])
+				pygame.display.flip()
 			elif pygame.mouse.get_pressed()[2]:
 				# if we have a RMB press, disable cells
 				target = getCellCoords(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
 				game[target[0]][target[1]] = 0
+				updateCell(target[0],target[1])
+				pygame.display.flip()
 
 def updateDisplay(screen):
 	# update the display
 	screen.fill(white)
-	drawlines()
+	#drawlines()
 	drawGame()
 	pygame.display.flip()
 
@@ -277,7 +295,7 @@ if __name__ == "__main__":
 		if play:
 			# update a generation
 			playgame()
-			updateDisplay(screen)
+			#updateDisplay(screen)
 			
 		pygame.time.wait(interval)
 		
