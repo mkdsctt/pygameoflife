@@ -105,14 +105,30 @@ def initGame(theGame):
 			theGame[i].append(0)
 
 """ load the game board from a game file """
-def loadGame(theGame):
-	#printgame()
+def loadGame(theGame, theFile):
+	global width
+	global height
+	global size
+	global numseed
+	global numrows
+	global numcols
+	#global game
+	
+	gamefile = open(theFile,'r')
+	line = gamefile.readline().split(',')
+	width, height = int(line[0]), int(line[1])
+	size, numseed = int(line[2]), int(line[3])
+	numrows, numcols = height/size, width/size
+	
+	initGame(theGame)
+	
 	seeds_read = 0
 	while seeds_read < numseed:
 		line = gamefile.readline().split(',')
 		#TODO CHANGE: see if this is where problem is with numbering
 		theGame[int(line[0])][int(line[1])] = 1
 		seeds_read += 1
+	#close(theFile)
 
 """ draw the game, draw each cell """
 def drawGame():
@@ -170,7 +186,7 @@ def handleEvents():
 			elif event.key == K_r:
 				# r - reload the game from file
 				clear()
-				loadGame(game)
+				loadGame(game,sys.argv[1])
 		elif event.type == pygame.MOUSEBUTTONDOWN:
 			if event.button == 1:
 				# toggle cells on left mouse button click
@@ -201,11 +217,18 @@ if __name__ == "__main__":
 	black = 	0,		0,		0
 
 	game = []
-	gamefile = open(sys.argv[1],'r')
-	line = gamefile.readline().split(',')
-	width, height = int(line[0]), int(line[1])
-	size, numseed = int(line[2]), int(line[3])
-	numrows, numcols = height/size, width/size
+	
+	
+	#~ gamefile = open(sys.argv[1],'r')
+	#~ line = gamefile.readline().split(',')
+	#~ width, height = int(line[0]), int(line[1])
+	#~ size, numseed = int(line[2]), int(line[3])
+	#~ numrows, numcols = height/size, width/size
+	numrows, numcols = 0, 0
+	
+	loadGame(game,sys.argv[1])
+	#initGame(game)
+	
 	interval = int(sys.argv[2])
 	screen = pygame.display.set_mode([width,height])
 	noiselevel = int((width*height)*0.001)
@@ -213,8 +236,8 @@ if __name__ == "__main__":
 	if width % size != 0 or height % size != 0:
 		sys.exit("error: size must evenly divide width and height")
 
-	initGame(game)
-	loadGame(game)
+	
+	#loadGame(game)
 	
 	play = 0
 	keepgoing = 1
