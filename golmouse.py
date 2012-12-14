@@ -25,11 +25,17 @@ def clear():
 			# for each colum
 			game[i][j] = 0
 
+""" determine whether a given cell location is valid and is inhabited"""
 def alive(theGame, i, j):
-	if(i < 0 or i >= numcols):
+	# check row validity
+	if(i < 0 or i >= numrows):
 		return 0
-	if(j < 0 or j >= numrows):
+		
+	# check col validity
+	if(j < 0 or j >= numcols):
 		return 0
+	
+	# if we are here the row, col is valid, return the value of the cell
 	return theGame[i][j]
 
 """ determine how many of the 8 neighbors of (i,j) are 'alive' """
@@ -38,7 +44,6 @@ def count(i , j):
 	coords = [ (i-1,j-1), (i-1,j), (i-1,j+1), (i,j-1), (i,j+1), (i+1,j-1), (i+1,j), (i+1,j+1) ]
 	
 	count = 0
-	
 	for c in coords:
 		if alive(game,c[0],c[1]):
 			count += 1
