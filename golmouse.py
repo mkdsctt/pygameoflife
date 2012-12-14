@@ -98,8 +98,11 @@ def addnoise():
 def population():
 	count = 0
 	for i in range(numrows):
+		# for each row
 		for j in range(numcols):
+			# for each col
 			if alive(game,i,j):
+				# count the cell if it is alive
 				count += 1
 	return count
 
