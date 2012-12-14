@@ -25,25 +25,24 @@ def clear():
 			# for each colum
 			game[i][j] = 0
 
+def alive(theGame, i, j):
+	if(i < 0 or i >= numcols):
+		return 0
+	if(j < 0 or j >= numrows):
+		return 0
+	return theGame[i][j]
+
 """ determine how many of the 8 neighbors of (i,j) are 'alive' """
 def count(i , j):
+	# the coordinates we should check
+	coords = [ (i-1,j-1), (i-1,j), (i-1,j+1), (i,j-1), (i,j+1), (i+1,j-1), (i+1,j), (i+1,j+1) ]
+	
 	count = 0
-	if i > 0 and game[i-1][j] == 1:
-		count += 1
-	if j > 0 and game[i][j-1] == 1:
-		count += 1
-	if i < (numrows-1) and game[i+1][j] == 1:
-		count += 1
-	if j < (numcols-1) and game[i][j+1] == 1:
-		count += 1
-	if i > 0 and j > 0 and game[i-1][j-1] == 1:
-		count += 1
-	if i < (numrows-1) and j < (numcols-1) and game[i+1][j+1] == 1:
-		count += 1
-	if i > 0 and j < (numcols-1) and game[i-1][j+1] == 1:
-		count += 1
-	if i < (numrows-1) and j > 0 and game[i+1][j-1] == 1:
-		count += 1
+	
+	for c in coords:
+		if alive(game,c[0],c[1]):
+			count += 1
+
 	return count
 
 """ print out the game , for internal use -- not for writing game file """
