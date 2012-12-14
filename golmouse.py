@@ -53,24 +53,38 @@ def count(i , j):
 """ print out the game , for internal use -- not for writing game file """
 def printgame():
 	for i in range(numrows):
+		# loop over each row
 		for j in range(numcols):
+			# loop over each col
+			# write out the cell status/value
 			sys.stdout.write(str(game[i][j]))
+		# add a newline at the end of a row
 		sys.stdout.write('\n')
 		
 """ play one generation of the game """
 def playgame():
-	newgame = []
+	# track changes to make in next step, so that we dont interfere
+	diff = []
+	
 	for i in range(numrows):
+		# for each row
 		for j in range(numcols):
-			if game[i][j] == 1:
+			# for each col
+			if alive(game,i,j):
+				# if the cell is living, see if we need to kill it
 				if count(i,j) <= 1:
-					newgame.append([i,j,0])
+					# if the cell is too low we die (str in numbers)
+					diff.append([i,j,0])
 				elif count(i,j) > 3:
-					newgame.append([i,j,0])
-			elif game[i][j] == 0:
+					# if the count is too high the cell starves
+					diff.append([i,j,0])
+			else:
+				# if a cell is unoccupied, see if we should fill it
 				if count(i,j) == 3:
-					newgame.append([i,j,1])
-	for change in newgame:
+					# population conditions for spawning a new cell
+					diff.append([i,j,1])
+	# update the game to reflect our changes
+	for change in diff:
 		game[int(change[0])][int(change[1])] = int(change[2])
 
 """ add noise randomly to the picture """
@@ -78,14 +92,14 @@ def addnoise():
 	for i in range(noiselevel):
 		col = random.randint(0,int(numcols) - 1)
 		row = random.randint(0,int(numrows) - 1)
-		game[row][col] = 1 - game[row][col]
+		invertCell(row,col)
 		
 """ get the population count -- the number of 'live' cells """
 def population():
 	count = 0
 	for i in range(numrows):
 		for j in range(numcols):
-			if game[i][j] == 1:
+			if alive(game,i,j):
 				count += 1
 	return count
 
@@ -94,18 +108,25 @@ def writegame():
 	print str(width) + "," + str(height) + "," + str(size) + "," + str(population())
 	newgame = []
 	for i in range(numrows):
+		# for each row
 		for j in range(numcols):
-			if game[i][j] == 1:
+			# for each column in the row (i.e. for each cell)
+			if alive(game,i,j):
+				# if the cell is alive, record it
 				newgame.append([i,j])
 	for change in newgame:
-		#game[int(change[0])][int(change[1])] = int(change[2])
+		# for each live cell recorded
+		# print out the coordinates to std out can be loaded later
 		print str(change[0]) + "," + str(change[1])
 
 """ initialize the game board to all empty cells """
 def initGame(theGame):
 	for i in range(numrows):
+		# for each row we need
+		# get an empty list for the cells
 		theGame.append([])
 		for j in range(numcols):
+			# for each column we need append a zero (blank) to the row
 			theGame[i].append(0)
 
 """ load the game board from a game file """
@@ -132,24 +153,25 @@ def loadGame(theGame, theFile):
 		#TODO CHANGE: see if this is where problem is with numbering
 		theGame[int(line[0])][int(line[1])] = 1
 		seeds_read += 1
-	#close(theFile)
 
 """ draw the game, draw each cell """
 def drawGame():
 	#draw game
 	for i in range(numrows):
+		# for each row
 		for j in range(numcols):
-			if(game[i][j] == 1):
+			# for each col (i.e. for each cell)
+			if alive(game,i,j):
+				# if the cell is alive
+				# fill in the cell location with a black rectangle
 				pygame.draw.rect(screen,black,pygame.Rect(j*size,i*size,size,size),0)
 
-""" get the row, col of the cell under the coords x, y """
-def getCell( x, y ):
+""" get the row, col of the cell under the screen coords x, y """
+def getCellCoords( x, y ):
 	return y / size, x / size
 
 """ invert the value of a cell -- keep track of last one inverted """
 def invertCell( x, y):
-	global enabling
-	
 	game[x][y] = 1 - game[x][y]
 
 """ handle the keyboard / mouse events """
@@ -194,16 +216,16 @@ def handleEvents():
 		elif event.type == pygame.MOUSEBUTTONDOWN:
 			if event.button == 1:
 				# toggle cells on left mouse button click
-				target = getCell(int(event.pos[0]),int(event.pos[1]))
+				target = getCellCoords(int(event.pos[0]),int(event.pos[1]))
 				invertCell(target[0],target[1])
 		elif event.type == pygame.MOUSEMOTION:
 			if pygame.mouse.get_pressed()[0]:
 				# if we have a LMB press, enable cells
-				target = getCell(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
+				target = getCellCoords(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
 				game[target[0]][target[1]] = 1
 			elif pygame.mouse.get_pressed()[2]:
 				# if we have a RMB press, disable cells
-				target = getCell(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
+				target = getCellCoords(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
 				game[target[0]][target[1]] = 0
 
 """ main method """
@@ -221,7 +243,6 @@ if __name__ == "__main__":
 	black = 	0,		0,		0
 
 	game = []
-	
 	
 	#~ gamefile = open(sys.argv[1],'r')
 	#~ line = gamefile.readline().split(',')
